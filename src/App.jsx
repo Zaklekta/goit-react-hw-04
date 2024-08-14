@@ -2,19 +2,22 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import Loader from "./components/Loader/Loader";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import { getPictures } from "./services/api";
 import SearchBar from "./components/SearchBar/SearchBar";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
+import ImageModal from "./components/ImageModal/ImageModal";
 
 function App() {
-  const [pictures, setPictures] = useState(null);
+  const [pictures, setPictures] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState(null);
   const [page, setPage] = useState(1);
   const [showBtn, setShowBtn] = useState(false);
+  const [modalState, setModalState] = useState({ src: "", alt: "" });
+  const [modalIsOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (searchValue === null) return;
@@ -25,7 +28,10 @@ function App() {
       try {
         const data = await getPictures(searchValue, page);
         console.log(data);
-        setPictures(data);
+        if (data.results.length === 0) {
+          toast("😞 Sorry, nothing was found for your search term.");
+        }
+        setPictures((prevData) => [...prevData, ...data.results]);
         if (data.total_pages > page) {
           setShowBtn(true);
         }
@@ -42,12 +48,21 @@ function App() {
   const onSearch = (searchQuery) => {
     console.log("Search query: ", searchQuery);
     setSearchValue(searchQuery);
+    setPictures([]);
   };
 
   const handleClick = () => {
     setPage(page + 1);
     console.log(page);
   };
+
+  const handlePictureClick = (modalPictureSrc, modalPictureDesc) => {
+    setModalState({ src: modalPictureSrc, alt: modalPictureDesc });
+    setIsOpen(true);
+  };
+  function handleCloseModal() {
+    setIsOpen(false);
+  }
   return (
     <>
       <Toaster
@@ -64,7 +79,12 @@ function App() {
         }}
       />
       <SearchBar onSearch={onSearch} />
-      <ImageGallery pictures={pictures} />
+      <ImageModal
+        modalState={modalState}
+        modalIsOpen={modalIsOpen}
+        onModalClose={handleCloseModal}
+      />
+      <ImageGallery pictures={pictures} onPictureClick={handlePictureClick} />
       {isLoading && <Loader />}
       {showBtn && <LoadMoreBtn handleClick={handleClick} />}
       {error !== null && <ErrorMessage />}

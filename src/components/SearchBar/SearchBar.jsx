@@ -5,7 +5,6 @@ import css from "./SearchBar.module.css";
 const INITIAL_VALUES = { searchQuery: "" };
 const SearchBar = ({ onSearch }) => {
   const handleSubmit = (values, actions) => {
-    console.log(values);
     if (values.searchQuery === "") {
       toast("❗You have to enter a search term to find some pictures.");
     } else {
@@ -15,7 +14,7 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <header>
+    <header className={css.header}>
       <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}>
         <Form className={css.form}>
           <Field
@@ -26,7 +25,9 @@ const SearchBar = ({ onSearch }) => {
             autoFocus
             placeholder="Search images and photos"
           />
-          <button type="submit">🔎 Search</button>
+          <button className={css.submitBtn} type="submit">
+            🔎 Search
+          </button>
         </Form>
       </Formik>
     </header>
