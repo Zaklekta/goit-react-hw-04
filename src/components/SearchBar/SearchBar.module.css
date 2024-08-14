@@ -2,7 +2,8 @@
   position: fixed;
   left: 50%;
   transform: translate(-50%);
-  background-color: rgba(141, 211, 229, 0.8);
+  background-color: rgba(255, 255, 255, 0.33);
+  box-shadow: 0 4px 10px rgba(148, 148, 148, 0.1);
   opacity: 80%;
   width: 100%;
   display: flex;
