@@ -49,11 +49,11 @@ function App() {
     console.log("Search query: ", searchQuery);
     setSearchValue(searchQuery);
     setPictures([]);
+    setPage(1);
   };
 
   const handleClick = () => {
     setPage(page + 1);
-    console.log(page);
   };
 
   const handlePictureClick = (modalPictureSrc, modalPictureDesc) => {
